@@ -27,6 +27,7 @@
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
+      generateBuildings();
     }
     window.addEventListener('resize', resize);
     resize();
@@ -72,11 +73,47 @@
 
     setInterval(spawnShootingStar, 4000);
 
+    // City skyline generation
+    let buildings = [];
+    function generateBuildings() {
+      buildings = [];
+      let x = 0;
+      while (x < w) {
+        const bw = 20 + Math.floor(Math.random() * 30);
+        const bh = 50 + Math.floor(Math.random() * (h * 0.3));
+        const windows = [];
+        for (let i = 4; i < bw - 4; i += 6) {
+          for (let j = 4; j < bh - 4; j += 6) {
+            if (Math.random() < 0.6) {
+              windows.push({ x: i, y: j, lit: Math.random() < 0.5 });
+            }
+          }
+        }
+        buildings.push({ x, y: h - bh, w: bw, h: bh, windows });
+        x += bw + 2;
+      }
+    }
+
+    function drawBuildings() {
+      for (let b of buildings) {
+        ctx.fillStyle = '#111';
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        for (let win of b.windows) {
+          if (Math.random() < 0.02) win.lit = !win.lit; // twinkle
+          if (win.lit) {
+            ctx.fillStyle = 'yellow';
+            ctx.fillRect(b.x + win.x, b.y + win.y, 3, 3);
+          }
+        }
+      }
+    }
+
     function animate() {
       ctx.fillStyle = '#000033';
       ctx.fillRect(0, 0, w, h);
       drawStars();
       drawShootingStars();
+      drawBuildings();
       requestAnimationFrame(animate);
     }
 
