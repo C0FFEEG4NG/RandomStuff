@@ -35,17 +35,20 @@
     const stars = Array.from({ length: 150 }, () => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      size: Math.random() * 2 + 1,
+      size: Math.random() * 1.5 + 0.5, // smaller stars = sharper
       twinkle: Math.random()
     }));
 
     const shootingStars = [];
 
+    // ✅ FIXED drawStars function — now uses circles, always visible
     function drawStars() {
       for (let star of stars) {
         const brightness = 240 + Math.sin(Date.now() * 0.002 + star.twinkle * 1000) * 15;
-        ctx.fillStyle = `rgb(${brightness},${brightness},${brightness})`;
-        ctx.fillRect(Math.floor(star.x), Math.floor(star.y), star.size, star.size);
+        ctx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
